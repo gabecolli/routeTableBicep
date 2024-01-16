@@ -1,31 +1,38 @@
-var routeConfig1 = {
-  name: 'route1'
-  addressPrefix: '20.118.99.224/32'
-  nextHopType: 'Internet'
-}
+//you define your routes here in code
 
-var routeConfig2 = {
-  name: 'route2'
-  addressPrefix: '40.83.235.53/32'
-  nextHopType: 'Internet'
-}
+param targetSubnetPrefix string
 
-var routeConfig3 = {
-  name: 'route3'
-  addressPrefix: '23.102.135.246/32'
-  nextHopType: 'Internet'
-}
 
-var routeConfigs = [
-  routeConfig1
-  routeConfig2
-  routeConfig3  
-]
+@description('just the vnet name and the subnet name  vnet/subnet')
+param subnetId string
+
+param routeConfigs array 
+// your array needs to look like this
+// var routeConfigs = [
+//   routeConfig1
+//   routeConfig2
+//   routeConfig3  
+// ]
+
+// the objects in the array need to look like this.
+// var routeConfig1 = {
+//   name: 'route1'
+//   addressPrefix: '20.118.99.224/32'
+//   nextHopType: 'Internet'
+// }
+
+
+
+
+
+
+param location string = resourceGroup().location
+
 
 
 // Get a reference to the existing subnet
 resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
-  name: 'nigc-testvnet/default'
+  name: subnetId
 }
 
 // Define a new subnet resource with the same name to modify its properties
@@ -33,7 +40,7 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' = {
   name: existingSubnet.name
   properties: {
     // Specify the properties you want to change
-    addressPrefix: '10.0.0.0/24'
+    addressPrefix: targetSubnetPrefix
     routeTable: {
       id: routetable.id
     }
